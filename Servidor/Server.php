@@ -1,12 +1,12 @@
 <?php
-    require_once("lib/nusoap.php");
-    require_once ("Conexion.php");
+    require_once("lib/nusoap.php");//referencia libreria
+    require_once ("Conexion.php");//referencia conexion
     ///////////////////////////////////////////////
-        $ns="http://localhost/SW/Caso%20Pr%C3%A1ctico%204/Servidor/";
-        $server = new soap_server();
+        $ns="http://localhost/SW/CasoPrac4/CasoPrac4/Servidor/Server.php";
+        $server = new soap_server(); //creacion del service y configuracion
         $server->configureWSDL('tenisCRUDService',$ns);
         $server->wsdl->schemaTargetNamespace=$ns;
-        $server->register(
+        $server->register(//registro de metodos del servicio
             'AddTenis',
             array('modelo'=>'xsd:string','color'=>'xsd:string','existencias'=>'xsd:int'),
             array('return'=>'xsd:string'),
@@ -17,7 +17,7 @@
             'Crea un registro en la tabla tenis con nusoap'
         );
     
-        function AddTenis($modelo, $color, $existencia){
+        function AddTenis($modelo, $color, $existencia){//metodo del agregar registro
             try {
                 $conexion=new Conexion();
                 $consulta=$conexion->prepare("INSERT INTO tenis(modelo, color, existencias)
@@ -44,7 +44,7 @@
             'Modifica un registro en la tabla tenis con nusoap'
         );
     
-        function ModTenis($idTenis, $modelo, $color, $existencia){
+        function ModTenis($idTenis, $modelo, $color, $existencia){//metodo del modificar registro
             try {
                 $conexion=new Conexion();
                 $consulta=$conexion->prepare("UPDATE tenis SET modelo=:modelo,color=:color,existencias=:existencia WHERE id_tenis=:idTenis");
@@ -70,7 +70,7 @@
             'encoded',
             'Elimina un registro en la tabla tenis con nusoap'
         );
-        function DellTenis($idTenis){
+        function DellTenis($idTenis){//metodo del eliminar registro
             try {
                 $conexion=new Conexion();
                 $consulta=$conexion->prepare("DELETE FROM tenis WHERE id_tenis=:idTenis");
@@ -98,12 +98,9 @@
                 $conexion=new Conexion();
                 $consulta=$conexion->prepare("SELECT * FROM tenis");
                 $consulta->execute();
-                $consulta->setFetchMode(PDO::FETCH_ASSOC);
-                $result = $consulta->setFetchMode(PDO::FETCH_NUM);
-                /*while($fila=$consulta->fetch()){
-                    print $fila[0]."\t".$fila[1]."\t".$fila[2]."\n";
-                }*/
-                return $fila=$consulta->fetch();
+                while($tabla = $consulta->fetch(PDO::FETCH_ASSOC)){
+                    return $tabla;
+                }
             } catch (Exeption $th) {
                 return $th->getMessage().'<br>';
             }
